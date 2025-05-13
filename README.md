@@ -31,8 +31,88 @@ By leveraging ephemerality, ELite seamlessly aligns multiple sessions, removes d
   <img src="./assets/ELite_pipeline.png" width="80%" />
 </p>
 
+## Installation
+
+### 1. Clone the repository
+```bash
+git clone git@github.com:dongjae0107/ELite.git
+```
+
+### 2. Set up conda environment
+We tested with python 3.10, but any python version will work fine.
+```bash
+conda create -n elite python=3.10
+conda activate elite
+```
+
+### 3. Install requirements
+
+```bash
+cd ELite
+pip install -e .
+```
+**Optional:** For CUDA-accelerated matching, we recommend installing `pygicp` and using the `PyGICPScanMatcher`. Follow the instructions below or refer to the [fast_gicp repository](https://github.com/koide3/fast_gicp) for more details.
+
+```bash
+git clone git@github.com:koide3/fast_gicp.git
+cd fast_gicp
+python3 setup.py install --user
+```
+
 ## Run
-*Code will be available soon!*
+### Example - Parkinglot dataset
+Download the dataset from this [link](https://drive.google.com/drive/folders/1D0L1jodXlzp1qVDPfdSQgE_-2IqbesyO?usp=drive_link) or use the script below to download example sequences (`01` and `02`):
+
+```bash
+bash scripts/download_parkinglot.sh
+```
+To download additional sequences, simply modify the script as needed.
+
+Then, initialize the ELite with first session:
+```bash
+python3 run_elite.py ./config/parkinglot_first.yaml
+```
+
+For the other sessions, run:
+```bash
+python3 run_elite.py ./config/parkinglot.yaml
+```
+
+### Run with Your Own Dataset
+#### Data preparation
+You need to provide a `Session` as input. Each session must include:
+- A `Scans/` folder containing point cloud files (in `.pcd` format), starting from `000000.pcd`
+- A `poses.txt` file containing LiDAR poses in KITTI format
+
+The expected directory structure is:
+
+```
+Session/
+├── poses.txt
+└── Scans/
+    ├── 000000.pcd
+    ├── 000001.pcd
+    ├── ...
+    └── 00000N.pcd
+```
+
+You can easily generate session data using the [saver tool](https://github.com/gisbi-kim/SC-LIO-SAM#applications) provided with [SC-LIO-SAM](https://github.com/gisbi-kim/SC-LIO-SAM).  
+Alternatively, [SC-A-LOAM](https://github.com/gisbi-kim/SC-A-LOAM) and [FAST_LIO_SLAM](https://github.com/gisbi-kim/FAST_LIO_SLAM) are also supported.
+
+#### Initial transform between sessions
+To run the alignment module, you need to provide an initial transformation for the new session. Initial transformation is for coarse aligning the first few scans of new session to the previous session's coordinate frame. The simplest method is to use **ICP in CloudCompare** and use the transformation matrix. 
+In near future, we are planning to automate this process by introducing global localization-based version (e.g. **Scan Context**) as written in the paper.
+
+
+#### Run ELite
+Once your dataset is prepared, update the parameters in `config/sample.yaml`.
+Make sure to set or remove the `prev_outputs_dir` field depending on whether this is the **first session** or a **subsequent session**.
+
+To run ELite:
+
+```bash
+python3 run_elite.py ./config/sample.yaml
+```
 
 ## Citation
 If you use ELite for any academic work, please cite our paper.

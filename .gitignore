@@ -1,0 +1,40 @@
+# Ignore Visual Studio Code workspace settings
+.vscode/
+
+# Ignore Python bytecode cache directories
+__pycache__/
+
+# Ignore build directories
+build/
+
+# Ignore all Point Cloud Data files
+*.pcd
+
+# Ignore all Polygon File Format files
+*.ply
+
+# Ignore all Pickle files
+*.pkl
+
+# Ignore all CSV files
+*.csv
+
+# Ignore all log files
+*.log
+
+# Ignore all JSON files
+*.json
+
+# Ignore all PNG files
+*.png
+
+# Ignore installation files
+*.whl
+*.egg
+*.egg-info
+
+# Ignore logs
+logs/
+
+# Ignore data
+data/

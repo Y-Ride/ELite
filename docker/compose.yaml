@@ -1,0 +1,14 @@
+services:
+  elite:
+    build:
+      context: .
+      dockerfile: dockerfile
+    image: elite
+    container_name: elite
+    environment:
+      CONTAINER_NAME: elite
+      DISPLAY: "${DISPLAY}"
+    network_mode: host
+    stdin_open: true
+    tty: true
+    

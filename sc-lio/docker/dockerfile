@@ -1,0 +1,54 @@
+# Start from a ROS ${ROS_DISTRO} base image.
+ARG ROS_DISTRO=kinetic
+FROM ros:${ROS_DISTRO}
+
+# Install common build tools and necessary dependencies
+RUN apt-get update \
+    # && apt-get install -y curl \
+    # && curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add - \
+    # && apt-get update \
+    && apt-get install -y \
+    ros-${ROS_DISTRO}-navigation \
+    ros-${ROS_DISTRO}-robot-localization \
+    ros-${ROS_DISTRO}-robot-state-publisher \
+    ros-${ROS_DISTRO}-cv-bridge \
+    ros-${ROS_DISTRO}-xacro \
+    ros-${ROS_DISTRO}-rviz \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update \
+    && apt install -y software-properties-common git \
+    && add-apt-repository -y ppa:borglab/gtsam-release-4.0 \
+    && apt-get update \
+    && apt install -y libgtsam-dev libgtsam-unstable-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+SHELL ["/bin/bash", "-c"]
+
+WORKDIR /root/catkin_ws/src
+
+RUN git clone https://github.com/gisbi-kim/SC-LIO-SAM.git \
+    && sed -i '/set(CMAKE_CXX_FLAGS_RELEASE/s/$/\nadd_definitions(-DPCL_NO_PRECOMPILE)/' SC-LIO-SAM/SC-LIO-SAM/CMakeLists.txt \
+    && sed -i '/ROS_ERROR("Point cloud is not in dense format/,/ros::shutdown();/c\
+// ROS_ERROR("Point cloud is not in dense format, please remove NaN p\\\n\
+// ros::shutdown();\\\n\
+pcl::PointCloud<VelodynePointXYZIRT>::Ptr tmpCloud(new pcl::PointCloud<VelodynePointXYZIRT>());\\\n\
+std::vector<int> indices;\\\n\
+pcl::removeNaNFromPointCloud(*laserCloudIn, *tmpCloud, indices);\\\n\
+laserCloudIn = tmpCloud;' SC-LIO-SAM/SC-LIO-SAM/src/imageProjection.cpp \
+    && cd .. \
+    && source /opt/ros/${ROS_DISTRO}/setup.bash \
+    && catkin_make
+
+RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc && \
+    echo "if [ -f ~/catkin_ws/devel/setup.bash ]; then" >> ~/.bashrc && \
+    echo "  source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc && \
+    echo "fi" >> ~/.bashrc
+
+# Include the custom environment setup script
+RUN echo "if [ -f /yride_env_setup/custom_env.sh ]; then" >> ~/.bashrc && \
+    echo "  source /yride_env_setup/custom_env.sh" >> ~/.bashrc && \
+    echo "fi" >> ~/.bashrc
+
+WORKDIR /root/catkin_ws
+

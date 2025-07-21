@@ -32,5 +32,8 @@ class StreamToLoguru:
 # sys.stdout = StreamToLoguru("INFO")
 # sys.stdout = StreamToLoguru("DEBUG")
 # sys.stderr = StreamToLoguru("ERROR")
-
-logger.info("Logger initialized and stderr are now redirected.")
+logger.info("")
+logger.info("")
+logger.info("------------------------------------------------------------------\n"
+"                             ---      Logger initialized and stderr are now redirected      ---\n"
+"                             ------------------------------------------------------------------")

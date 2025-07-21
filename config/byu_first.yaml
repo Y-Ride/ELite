@@ -1,0 +1,41 @@
+settings:
+  scans_dir: "/home/benb/data_byu/bags/longterm_mapping/scliosam_results/7_2_2025__950/Scans"
+  poses_file: "/home/benb/data_byu/bags/longterm_mapping/scliosam_results/7_2_2025__950/optimized_poses.txt"
+  calib_path: ""
+  output_dir: "./data/byu/7_2_2025__950_results"
+  # prev_output_dir: "./data/dataset/prev_session/outputs" # if it is the first session, comment this line
+
+alignment:
+  init_transform: [1.0, 0.0, 0.0, 0.0, 
+                   0.0, 1.0, 0.0, 0.0, 
+                   0.0, 0.0, 1.0, 0.0, 
+                   0.0, 0.0, 0.0, 1.0] # estimate an initial transform by selecting loop pair from two sessions via place recognition (e.g., Scan Context)
+  src_voxel_size: 0.1
+  tgt_voxel_size: 0.4
+  icp_max_correspondence_distance: 1.0
+  gicp_max_correspondence_distance: 1.0
+  matcher: PyGICPScanMatcher # [Open3DScanMatcher, PyGICPScanMatcher]
+
+dynamic_object_removal:
+  anchor_voxel_size: 0.2
+  stride: 3
+  num_k: 6
+  max_ratio: 0.9
+  min_ratio: 0.2
+  num_samples: 50 # trade-off between speed and accuracy
+  dynamic_threshold: 0.5
+  save_cleaned_session_map: true
+  viz_cleaned_session_map: true
+  save_static_dynamic_map: true
+  viz_static_dynamic_map: true
+
+map_update:
+  voxel_size: 0.2
+  coexist_threshold: 0.4
+  overlap_threshold: 2.0
+  density_radius: 0.5
+  rho_factor: 3.0
+  uncertainty_factor: 2.0
+  global_eph_threshold: 0.5
+  remove_dynamic_points: true
+  remove_outlier_points: true

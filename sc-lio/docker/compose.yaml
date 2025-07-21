@@ -1,0 +1,25 @@
+services:
+  sc-lio-sam:
+    build:
+      context: .
+      dockerfile: dockerfile
+    image: sc-lio-sam
+    container_name: sc-lio-sam
+    volumes:
+      - ../config:/root/catkin_ws/src/SC-LIO-SAM/SC-LIO-SAM/config
+      - ../launch:/root/catkin_ws/src/SC-LIO-SAM/SC-LIO-SAM/launch
+      - ${HOME}/yride_env_setup:/yride_env_setup:ro # Take out
+      - /tmp/.X11-unix:/tmp/.X11-unix # Needed to display RViz within the container
+      - ${HOME}/data_byu/bags:/bags
+      - /etc/machine-id:/etc/machine-id:ro # Testing
+    environment:
+      DISPLAY: "${DISPLAY}"
+      CONTAINER_NAME: sc-lio-sam # Take out
+      XDG_RUNTIME_DIR: "/tmp/runtime-root" # For Rviz2
+    devices:
+      - "/dev/dri:/dev/dri" # For Rviz2
+    working_dir: /root/catkin_ws
+    network_mode: host
+    stdin_open: true
+    tty: true
+    command: ["/ros_entrypoint.sh", "roscore"]

@@ -23,9 +23,9 @@ dynamic_object_removal:
   num_samples: 30
   dynamic_threshold: 0.5
   save_cleaned_session_map: true
-  viz_cleaned_session_map: false
+  viz_cleaned_session_map: true
   save_static_dynamic_map: true
-  viz_static_dynamic_map: false
+  viz_static_dynamic_map: true
 
 map_update:
   voxel_size: 0.2

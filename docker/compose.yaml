@@ -5,10 +5,13 @@ services:
       dockerfile: dockerfile
     image: elite
     container_name: elite
+    volumes:
+      - ${HOME}/repos/ELite:/root/ELite:rw
+      - ${HOME}/data_byu/bags/longterm_mapping/scliosam_results:/root/scliosam_results
+      - ${HOME}/yride_env_setup:/yride_env_setup:ro
     environment:
       CONTAINER_NAME: elite
       DISPLAY: "${DISPLAY}"
     network_mode: host
     stdin_open: true
     tty: true
-    

@@ -1,3 +1,3 @@
 [submodule "external/fast_gicp"]
 	path = external/fast_gicp
-	url = git@github.com:koide3/fast_gicp.git
+	url = https://github.com/koide3/fast_gicp.git

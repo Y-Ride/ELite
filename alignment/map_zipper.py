@@ -9,7 +9,7 @@ from utils.session import Session
 from utils.session_map import SessionMap
 from utils.logger import logger
 from alignment.matcher.open3d_scan_matcher import Open3DScanMatcher
-# from alignment.matcher.pygicp_scan_matcher import PyGICPScanMatcher
+from alignment.matcher.pygicp_scan_matcher import PyGICPScanMatcher
 from alignment.global_registration import register_with_fpfh_ransac
 
 
@@ -24,7 +24,7 @@ class MapZipper:
 
         matcher_name = self.params["alignment"].get("matcher", "Open3DScanMatcher")
         self.matcher_cls = {"Open3DScanMatcher": Open3DScanMatcher,
-                            # "PyGICPScanMatcher": PyGICPScanMatcher,
+                            "PyGICPScanMatcher": PyGICPScanMatcher,
                             }.get(matcher_name, None)
         
         self.source_session = None

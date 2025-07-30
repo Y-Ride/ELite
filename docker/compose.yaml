@@ -9,9 +9,17 @@ services:
       - ${HOME}/repos/ELite:/root/ELite:rw
       - ${HOME}/data_byu/bags/longterm_mapping/scliosam_results:/root/scliosam_results
       - ${HOME}/yride_env_setup:/yride_env_setup:ro
+      - /dev/dri:/dev/dri
     environment:
       CONTAINER_NAME: elite
       DISPLAY: "${DISPLAY}"
     network_mode: host
     stdin_open: true
     tty: true
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all # or specify a number like 1, 2, or specific IDs like '"0,1"'
+              capabilities: [gpu]

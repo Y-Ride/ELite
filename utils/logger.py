@@ -23,10 +23,10 @@ logger.add("logs/output.log",
 # Uncomment if you want to capture all print/errors via logger
 # sys.stdout = StreamToLoguru("DEBUG")
 # sys.stderr = StreamToLoguru("ERROR")
-print(f"Terminal output saved to logs/output.log")
+print(f"See logs/output.log for terminal debugging output")
 
-logger.info("")
-logger.info("")
+logger.debug("")
+logger.debug("")
 logger.info("------------------------------------------------------------------\n"
 "                             ---      Logger initialized and stderr are now redirected      ---\n"
 "                             ------------------------------------------------------------------")

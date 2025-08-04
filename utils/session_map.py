@@ -8,11 +8,18 @@ from utils.logger import logger
 
 
 class SessionMap():
-    def __init__(self, map: np.ndarray = None, eph: np.ndarray = None):
+    def __init__(self, map: np.ndarray = None, eph: np.ndarray = None, build_kdtree: bool = True):
         self.map = None if map is None else map
         self.eph = None if eph is None else self._clamp_eph(eph, 1e-1, 1)
-        if self.map is not None:
+        self.kdtree = None
+        if self.map is not None and build_kdtree:
             self.kdtree = KDTree(self.map)
+    
+    def build_kdtree(self):
+        if self.map is not None:
+            logger.info("Building KDTree for SessionMap...")
+            self.kdtree = KDTree(self.map)
+            logger.info("KDTree built.")
 
     def set_poses(self, poses: List[np.ndarray]):
         assert isinstance(poses, list), "poses must be a list of numpy arrays"

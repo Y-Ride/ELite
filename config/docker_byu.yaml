@@ -1,9 +1,9 @@
 settings:
-  scans_dir: "/root/scliosam_results/7_2_2025__950/Scans"
-  poses_file: "/root/scliosam_results/7_2_2025__950/optimized_poses.txt"
+  scans_dir: "/root/scliosam_results/7_3_2025__17300/Scans"
+  poses_file: "/root/scliosam_results/7_3_2025__1730/optimized_poses.txt"
   calib_path: ""
-  output_dir: "./data/docker/byu/7_2_2025__950_results"
-  # prev_output_dir: "./data/dataset/prev_session/outputs" # if it is the first session, comment this line
+  output_dir: "./data/docker/byu/7_3_2025__1730_results"
+  prev_output_dir: "./data/dataset/prev_session/outputs" # if it is the first session, comment this line
 
 alignment:
   init_transform: [1.0, 0.0, 0.0, 0.0, 
@@ -24,10 +24,10 @@ dynamic_object_removal:
   min_ratio: 0.2
   num_samples: 50 # trade-off between speed and accuracy
   dynamic_threshold: 0.5
-  save_static_dynamic_map: true
-  viz_static_dynamic_map: false
   save_cleaned_session_map: true
-  viz_cleaned_session_map: false
+  viz_cleaned_session_map: true
+  save_static_dynamic_map: true
+  viz_static_dynamic_map: true
 
 map_update:
   voxel_size: 0.2

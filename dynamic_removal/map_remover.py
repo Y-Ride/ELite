@@ -58,43 +58,42 @@ class MapRemover:
 
 
         if use_checkpoint:
-            logger.info("Loading checkpoint before Step 3...")
+            logger.info("Loading checkpoint...")
 
             anchor_points = o3d.io.read_point_cloud(os.path.join(checkpoint_dir, "anchor_points.pcd"))
             anchor_eph_l = np.load(os.path.join(checkpoint_dir, "anchor_eph_l.npy"))
             session_map = o3d.io.read_point_cloud(os.path.join(checkpoint_dir, "session_map.pcd"))
             anchor_kdtree = KDTree(np.asarray(anchor_points.points))
 
-            logger.info("Checkpoint loaded. Skipping to Step 3.")
+            logger.info("Checkpoint loaded.")
         else:
         
             logger.info(f"Starting dynamic object removal")
 
             logger.info(f"Aggregating {len(self.session_loader)} scans to create session map...")
             # 1) Aggregate scans to create session map
-            session_map = self.session_loader[0:len(self.session_loader)].downsample(0.01).get()
+            # session_map = self.session_loader[0:len(self.session_loader)].downsample(0.01).get()
 
             ## Ben added
-            # batch_size = 100  # Adjust based on RAM
-            # partial_clouds = []
-            # total_batches = (len(self.session_loader) // batch_size) +1
-            # for i in range(0, len(self.session_loader), batch_size):
-            #     logger.debug(f"Processing batch {(i//batch_size)+1} of {total_batches}")
-            #     batch = self.session_loader[i:i + batch_size]  # Returns PointCloud
-            #     downsampled = batch.downsample(0.01).get()     # Apply downsampling to this batch
-            #     partial_clouds.append(downsampled)
+            batch_size = 100  # Adjust based on RAM
+            partial_clouds = []
+            total_batches = (len(self.session_loader) // batch_size) +1
+            for i in range(0, len(self.session_loader), batch_size):
+                logger.debug(f"Processing batch {(i//batch_size)+1} of {total_batches}")
+                batch = self.session_loader[i:i + batch_size]  # Returns PointCloud
+                downsampled = batch.downsample(0.01).get()     # Apply downsampling to this batch
+                partial_clouds.append(downsampled)
 
-            # # Merge all downsampled batches
-            # logger.debug(f"Combining batch point clouds...")
-            # combined = o3d.geometry.PointCloud()
+            # Merge all downsampled batches
+            logger.debug(f"Combining batch point clouds...")
+            combined = o3d.geometry.PointCloud()
 
-            # for pc in partial_clouds:
-            #     combined += pc
+            for pc in partial_clouds:
+                combined += pc
 
-            # session_map = combined  # Now this is the final downsampled point cloud
+            session_map = combined  # Now this is the final downsampled point cloud
             ## End of added
 
-            logger.debug(f"debug #1")
             eph_l = np.zeros(len(session_map.points))
             logger.info(f"Initialized session map")
 
@@ -156,7 +155,7 @@ class MapRemover:
             logger.info(f"Checkpoint saved successfully to {checkpoint_dir} before Step 3.")
 
         # 3) Propagate anchor local ephemerality to session map
-        logger.debug(f"Propagate anchor local ephemerality to session map")
+        logger.info(f"Propagate anchor local ephemerality to session map")
         # distances, indices = anchor_kdtree.query(np.asarray(session_map.points), k=p_dor["num_k"])
         # distances = np.maximum(distances, 1e-6) # avoid division by zero
         # weights = 1 / (distances**2)
@@ -168,7 +167,7 @@ class MapRemover:
         eph_l = np.zeros(num_points)
         total_batches = (num_points // batch_size) + 1
 
-        for start in range(0, num_points, batch_size):
+        for start in trange(0, num_points, batch_size):
             logger.debug(f"Processing anchors {start}/{num_points}")
             end = min(start + batch_size, num_points)
             batch_points = np.asarray(session_map.points[start:end])
@@ -180,7 +179,7 @@ class MapRemover:
             eph_l[start:end] = np.sum(weights * anchor_eph_l[indices], axis=1)
 
         # 4) Remove dynamic objects to create cleaned session map
-        logger.debug(f"Remove dynamic objects to create cleaned session map")
+        logger.info(f"Remove dynamic objects to create cleaned session map")
         static_points = session_map.select_by_index(np.where(eph_l <= p_dor["dynamic_threshold"])[0])
         static_eph_l = eph_l[eph_l <= p_dor["dynamic_threshold"]]
         static_points.paint_uniform_color([0.5, 0.5, 0.5])

@@ -22,19 +22,31 @@ RUN apt update && apt install -y sudo && \
     make -j$(($(nproc) / 2 < 1 ? 1 : $(nproc) / 2)) && \
     make install && \
     rm -rf /opt/Open3D
+
+# SHELL [ "/bin/bash" ]
     
 WORKDIR /root
 
-RUN git clone https://github.com/Y-Ride/ELite.git \
-    && cd ELite 
-    # && pip install -e .
+RUN git clone --recurse-submodules https://github.com/Y-Ride/ELite.git \
+    && cd ELite \
+    && . ~/.bashrc \
+    && pip install -e .
 
 WORKDIR /root/ELite
 
-# RUN cd external/fast_gicp \
-#     && python3 setup.py install
+RUN . ~/.bashrc && \
+    cd external/fast_gicp \
+    && python3 setup.py install
 
-# Include the custom environment setup script
-RUN echo "if [ -f /yride_env_setup/custom_env.sh ]; then" >> ~/.bashrc && \
-    echo "  source /yride_env_setup/custom_env.sh" >> ~/.bashrc && \
-    echo "fi" >> ~/.bashrc
+# Uncomment the bash_completion lines in the .bashrc file
+RUN sed -i '/#if \[ -f \/etc\/bash_completion \]/s/^#//' ~/.bashrc && \
+    sed -i '/#    \. \/etc\/bash_completion/s/^#//' ~/.bashrc && \
+    sed -i '/#fi$/s/^#//' ~/.bashrc
+
+# Insert the custom_env.sh block right before the 'enable programmable completion' block.
+# We'll search for the line starting with '# enable programmable completion features'
+# and insert the new block before it.
+RUN sed -i '/# enable programmable completion features/i\
+if [ -f /yride_env_setup/custom_env.sh ]; then\n\
+  source /yride_env_setup/custom_env.sh\n\
+fi\n' ~/.bashrc

@@ -1,6 +1,6 @@
 settings:
-  scans_dir: "/home/benb/data_byu/bags/longterm_mapping/scliosam_results/7_2_2025__950/Scans"
-  poses_file: "/home/benb/data_byu/bags/longterm_mapping/scliosam_results/7_2_2025__950/optimized_poses.txt"
+  scans_dir: "/home/bab272/data_byu/bags/longterm_mapping/scliosam_results/7_2_2025__950/Scans"
+  poses_file: "/home/bab272/data_byu/bags/longterm_mapping/scliosam_results/7_2_2025__950/optimized_poses.txt"
   calib_path: ""
   output_dir: "./data/byu/7_2_2025__950_results"
   # prev_output_dir: "./data/dataset/prev_session/outputs" # if it is the first session, comment this line
